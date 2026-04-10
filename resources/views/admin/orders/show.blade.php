@@ -32,7 +32,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($item->product && $item->product->image)
-                                        <img src="{{ asset('storage/' . $item->product->image) }}" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
+                                        <img src="{{ asset($item->product->image) }}" class="rounded me-3" width="50" height="50" style="object-fit: cover;">
                                         @endif
                                         <div>
                                             <div class="fw-bold">{{ $item->product_name }}</div>
