@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -18,13 +19,18 @@ class AdminController extends Controller
 
     public function store(Request $request) {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required'
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:admins,email',
+            'password' => 'required|min:6'
         ]);
 
-        Admin::create($request->only('name','email','password'));
-        return redirect('/admin/admins');
+        Admin::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+        
+        return redirect('/admin/admins')->with('success', 'Thêm Admin thành công');
     }
 
     public function edit($id) {
@@ -33,10 +39,26 @@ class AdminController extends Controller
     }
 
     public function update(Request $request, $id) {
-        Admin::findOrFail($id)->update(
-            $request->only('name','email','password')
-        );
-        return redirect('/admin/admins');
+        $admin = Admin::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:admins,email,' . $id,
+            'password' => 'nullable|min:6'
+        ]);
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $admin->update($data);
+        
+        return redirect('/admin/admins')->with('success', 'Cập nhật Admin thành công');
     }
 
     public function destroy($id) {
