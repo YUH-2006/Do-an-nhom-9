@@ -41,6 +41,7 @@
 
                 <tbody>
                 @forelse($products as $p)
+                    @php($productId = $p->id ?? $p->getKey())
                     <tr>
                         <td class="text-muted">#{{ $p->id }}</td>
                         <td>
@@ -69,12 +70,16 @@
                         <td class="fw-bold text-primary">{{ number_format($p->price) }}đ</td>
                         <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
-                                <a href="{{ route('admin.products.edit', $p->id) }}" class="btn btn-sm btn-outline-warning">Sửa</a>
-                                <form method="POST" action="{{ route('admin.products.destroy', $p->id) }}"
-                                      onsubmit="return confirm('Xóa sản phẩm này?')">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
-                                </form>
+                                @if($productId)
+                                    <a href="{{ route('admin.products.edit', ['id' => $productId]) }}" class="btn btn-sm btn-outline-warning">Sửa</a>
+                                    <form method="POST" action="{{ route('admin.products.destroy', ['id' => $productId]) }}"
+                                          onsubmit="return confirm('Xóa sản phẩm này?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                                    </form>
+                                @else
+                                    <span class="badge text-bg-secondary">Thiếu ID</span>
+                                @endif
                             </div>
                         </td>
                     </tr>

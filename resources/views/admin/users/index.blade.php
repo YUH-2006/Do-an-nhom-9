@@ -28,6 +28,7 @@
                 </thead>
                 <tbody>
                     @foreach($users as $user)
+                    @php($userId = $user->id ?? $user->getKey())
                     <tr>
                         <td>#{{ $user->id }}</td>
                         <td>
@@ -38,11 +39,15 @@
                         <td>{{ $user->created_at ? $user->created_at->format('d/m/Y') : 'Chưa có' }}</td>
                         <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
-                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">Sửa</a>
-                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
-                                </form>
+                                @if($userId)
+                                    <a href="{{ route('admin.users.edit', ['id' => $userId]) }}" class="btn btn-sm btn-outline-warning">Sửa</a>
+                                    <form action="{{ route('admin.users.destroy', ['id' => $userId]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                                    </form>
+                                @else
+                                    <span class="badge text-bg-secondary">Thiếu ID</span>
+                                @endif
                             </div>
                         </td>
                     </tr>

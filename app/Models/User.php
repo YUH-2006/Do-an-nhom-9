@@ -11,6 +11,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
         'name',
         'email',
@@ -30,13 +32,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Backward compatibility for existing code using $user->id.
+     */
+    public function getIdAttribute()
+    {
+        return $this->attributes['user_id'] ?? null;
+    }
+
     public function orders()
     {
-        return $this->hasMany(\App\Models\Order::class);
+        return $this->hasMany(\App\Models\Order::class, 'user_id', 'user_id');
     }
 
     public function cart()
     {
-        return $this->hasOne(Cart::class);
+        return $this->hasOne(Cart::class, 'user_id', 'user_id');
     }
 }
